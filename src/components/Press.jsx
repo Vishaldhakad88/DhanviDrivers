@@ -1,8 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
-import press1 from "../assets/press/press1.png";
-import press2 from "../assets/press/press2.png";
-import press3 from "../assets/press/press3.png";
+import press1 from "../assets/press/press1.jpg";
+import press2 from "../assets/press/press2.jpg";
+import press3 from "../assets/press/press3.jpg";
 
 export default function PressSection() {
   const pressData = [
