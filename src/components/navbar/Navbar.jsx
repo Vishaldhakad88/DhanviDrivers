@@ -1,3 +1,4 @@
+// src/components/Navbar.jsx
 import React, { useState } from "react";
 import {
   Menu,
@@ -7,15 +8,28 @@ import {
   Dribbble,
   Linkedin,
 } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
 
-// ⭐ IMPORT YOUR LOGO
+// logo path (adjust relative if your file lives in a different folder)
 import logo from "../../assets/logo.jpg";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState("Home");
+  // active state not required for routing; NavLink handles active class
+  const navItems = [
+    { label: "Home", path: "/" },
+    { label: "About Us", path: "/about" },
+    // { label: "Projects", path: "/projects" },
+    { label: "Press", path: "/press" },
+    { label: "Contact", path: "/contact" },
+  ];
 
-  const navItems = ["Home", "About Us", "Projects", "Studio", "Contact"];
+  const navigate = useNavigate();
+
+  const handleMobileNav = (path) => {
+    setOpen(false);
+    navigate(path);
+  };
 
   return (
     <>
@@ -25,16 +39,18 @@ export default function Navbar() {
 
           {/* LEFT - LOGO */}
           <div className="flex items-center gap-3">
-            <img
-              src={logo}
-              alt="logo"
-              className="h-12 w-auto object-contain rounded"
-            />
+            <NavLink to="/">
+              <img
+                src={logo}
+                alt="logo"
+                className="h-12 w-auto object-contain rounded"
+              />
+            </NavLink>
           </div>
 
-          {/* ⭐ MOBILE DOWNLOAD BUTTON (CENTER) */}
+          {/* MOBILE DOWNLOAD BUTTON (CENTER) */}
           <div className="md:hidden absolute left-1/2 -translate-x-1/2">
-            <button className="px-4 py-1.5 bg-yellow-700 text-black font-semibold rounded-md text-sm">
+            <button className="px-4 py-1.5 bg-yellow-300 text-black font-semibold rounded-md text-sm">
               Download App
             </button>
           </div>
@@ -42,38 +58,49 @@ export default function Navbar() {
           {/* CENTER NAV LINKS (DESKTOP) */}
           <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
-              <button
-                key={item}
-                onClick={() => setActive(item)}
-                className={`px-4 py-1.5 rounded-md text-sm transition-all duration-200 ${
-                  active === item
-                    ? "bg-yellow-400 text-white font-semibold"
-                    : "text-gray-300 hover:text-white"
-                }`}
+              <NavLink
+                key={item.path}
+                to={item.path}
+                end
+                className={({ isActive }) =>
+                  `px-4 py-1.5 rounded-md text-sm transition-all duration-200 ${
+                    isActive
+                      ? "bg-yellow-400 text-white font-semibold"
+                      : "text-gray-300 hover:text-white"
+                  }`
+                }
               >
-                {item}
-              </button>
+                {item.label}
+              </NavLink>
             ))}
           </div>
 
           {/* RIGHT - SOCIAL ICONS + DOWNLOAD BTN (DESKTOP) */}
           <div className="hidden md:flex items-center gap-5">
-            <Instagram className="w-5 h-5 text-gray-300 hover:text-white" />
-            <Github className="w-5 h-5 text-gray-300 hover:text-white" />
-            <Dribbble className="w-5 h-5 text-gray-300 hover:text-white" />
-            <Linkedin className="w-5 h-5 text-gray-300 hover:text-white" />
+            <a className="text-gray-300 hover:text-white" aria-label="instagram">
+              <Instagram className="w-5 h-5" />
+            </a>
+            <a className="text-gray-300 hover:text-white" aria-label="github">
+              <Github className="w-5 h-5" />
+            </a>
+            <a className="text-gray-300 hover:text-white" aria-label="dribbble">
+              <Dribbble className="w-5 h-5" />
+            </a>
+            <a className="text-gray-300 hover:text-white" aria-label="linkedin">
+              <Linkedin className="w-5 h-5" />
+            </a>
 
-            {/* ⭐ DOWNLOAD APP BUTTON (DESKTOP) */}
-            <button className="ml-2 px-4 py-1.5 bg-yellow-500 text-black font-semibold rounded-md text-sm hover:bg-yellow-500 transition">
+            {/* DOWNLOAD APP BUTTON (DESKTOP) */}
+            <button
+              onClick={() => navigate("/")}
+              className="ml-2 px-4 py-1.5 bg-yellow-500 text-black font-semibold rounded-md text-sm hover:bg-yellow-500 transition"
+            >
               Download App
             </button>
           </div>
 
           {/* MOBILE MENU BUTTON */}
-          <button
-            onClick={() => setOpen(true)}
-            className="md:hidden text-yellow-400"
-          >
+          <button onClick={() => setOpen(true)} className="md:hidden text-yellow-400">
             <Menu size={26} />
           </button>
         </div>
@@ -84,10 +111,7 @@ export default function Navbar() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex justify-end">
           <div className="w-72 h-full bg-[#0b0b0c] p-6 relative">
             {/* CLOSE BUTTON */}
-            <button
-              onClick={() => setOpen(false)}
-              className="absolute right-4 top-4 text-gray-300"
-            >
+            <button onClick={() => setOpen(false)} className="absolute right-4 top-4 text-gray-300">
               <X size={24} />
             </button>
 
@@ -95,28 +119,24 @@ export default function Navbar() {
             <div className="mt-14 flex flex-col gap-6">
               {navItems.map((item) => (
                 <button
-                  key={item}
-                  onClick={() => {
-                    setActive(item);
-                    setOpen(false);
-                  }}
+                  key={item.path}
+                  onClick={() => handleMobileNav(item.path)}
                   className={`text-left text-lg px-3 py-2 rounded-md transition ${
-                    active === item
-                      ? "bg-yellow-400 text-black font-semibold"
-                      : "text-gray-400 hover:text-white"
+                    // we can't use NavLink here easily; keep visual style consistent
+                    "text-gray-400 hover:text-white"
                   }`}
                 >
-                  {item}
+                  {item.label}
                 </button>
               ))}
             </div>
 
             {/* SOCIAL ICONS BOTTOM */}
             <div className="absolute bottom-8 left-6 flex items-center gap-6">
-              <Instagram className="w-5 h-5 text-gray-300" />
-              <Github className="w-5 h-5 text-gray-300" />
-              <Dribbble className="w-5 h-5 text-gray-300" />
-              <Linkedin className="w-5 h-5 text-gray-300" />
+              <a className="text-gray-300" aria-label="instagram"><Instagram className="w-5 h-5" /></a>
+              <a className="text-gray-300" aria-label="github"><Github className="w-5 h-5" /></a>
+              <a className="text-gray-300" aria-label="dribbble"><Dribbble className="w-5 h-5" /></a>
+              <a className="text-gray-300" aria-label="linkedin"><Linkedin className="w-5 h-5" /></a>
             </div>
           </div>
         </div>
