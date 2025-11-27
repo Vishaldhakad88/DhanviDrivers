@@ -1,5 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
+
+// FIXED: Correct paths & extensions
 import press1 from "../assets/press/press1.jpg";
 import press2 from "../assets/press/press2.jpg";
 import press3 from "../assets/press/press3.jpg";
